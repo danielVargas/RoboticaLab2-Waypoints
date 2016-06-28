@@ -13,15 +13,25 @@
   #map {
     height: 80%;
   }
+  .alertify-notifier .ajs-message.ajs-error{
+    color: #fff;
+    background: rgba(217, 92, 92, 0,95);
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0,5);
+  }
+  .alertify-notifier .ajs-message.ajs-success{
+    color: #fff;
+    background: rgba(217, 92, 92, 0,95);
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0,5);
+  }
   </style>
   <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">   
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> 
+  <link rel="stylesheet" href="alertify.min.css">    
   <!-- Latest compiled and minified JavaScript -->
+  <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-  <script
-  src="https://code.jquery.com/jquery-3.0.0.min.js"
-  integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0="
-  crossorigin="anonymous"></script>
+  <script   src="alertify.min.js"></script>
+  
 </head>
 <body>
   <div class="alert alert-success" align ="center">Laboratorio 2 Robótica - Drones</div>
@@ -30,23 +40,51 @@
     <div class="col">
       <div class="row">
         <div class="btn btn-success" onclick="agregarArea();">Indicar Area</div>
-        <div class="btn btn-danger" onclick="agregarObstaculo();">Ingresar Obstáculo</div>
+        <div class="btn btn-danger" data-toggle="modal" data-target="#myModal">Ingresar Obstáculo</div>
         <div class="btn btn-primary pull-right">Generar misión</div>
       </div>
     </div>
   </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Nuevo Obstáculo</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="largo">Largo</label>
+          <input type="number" name="largo" id="largo" placeholder="metros" min="1" class="form-control">
+          <label for="ancho">Ancho</label>
+          <input type="number" name="ancho" id="ancho" placeholder="metros" min="1" class="form-control">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary"  onclick="agregarObstaculo();" >Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <script>
   var map;
   var infoWindow;
   var polygon;
   var area;
+  var markers=[];
   function initMap() {
 
     var myLatLng = {lat: -33.5926511, lng: -70.7327125};
 
     map = new google.maps.Map(document.getElementById('map'), {
       zoom: 13,
-      center: myLatLng
+      center: myLatLng,
+      mapTypeId: google.maps.MapTypeId.SATELLITE
+
     });
 
 
@@ -96,24 +134,40 @@
       infoWindow.close(map);
     }, 1500);
   }
-function agregarObstaculo(){
-  var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+  function agregarObstaculo(){
+    var largo = $("#largo").val();
+    var ancho = $("#ancho").val();
 
+    if (ancho < 1 || largo < 1 ){
+      alertify.error('Debe ingresar alto o ancho');
+    }
+    else{
+      var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+      var len = markers.length;
+      var temp = []
+      temp.push(len);
+      temp.push([largo,ancho]);
+      temp.push(new google.maps.Marker(
+      {
+          map:map,
+          draggable:true,
+          animation: google.maps.Animation.DROP,
+          position: map.getCenter(),
+          icon: iconBase + 'schools_maps.png'
 
-  var marker = new google.maps.Marker(
-  {
-      map:map,
-      draggable:true,
-      animation: google.maps.Animation.DROP,
-      position: map.getCenter(),
-      icon: iconBase + 'schools_maps.png'
+      }));
+      markers.push(temp)
+      google.maps.event.addListener(markers[len][2], 'dragend', function() 
+      {
+          markers[len][2] = markers[len][2];
+          // Quitar comentario para mirar posición
+          //alertify.success(markers[len][2].getPosition().toString());
 
-  });
-  google.maps.event.addListener(marker, 'dragend', function() 
-  {
-      console.log(marker.getPosition());
-  });
-}
+      });
+      alertify.success("Se a ingresado Obstáculo con éxito");
+      $("#myModal").modal('toggle');
+    }
+  }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
   async defer></script>
