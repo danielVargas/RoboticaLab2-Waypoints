@@ -223,42 +223,28 @@
 ////////////////////////////////////////////////////
 var poly;
 function generarCamino() {
-  poly = new google.maps.Polyline({
-    strokeColor: '#FFFF00',
-    strokeOpacity: 1.0,
-    strokeWeight: 3
-  });
-  poly.setMap(map);
-
-   // var newpath = path.getPath();
-    //var pos = map.getCenter();
-    //path.getPath().pusn(pos.latLng);
-    //for (var i = 0; i < 100; i++) {
+  if(polygon != null && area!= null &&  posInicial!= null){
+      poly = new google.maps.Polyline({
+      strokeColor: '#FFFF00',
+      strokeOpacity: 1.0,
+      strokeWeight: 3
+      });
+      poly.setMap(map);
       var path = poly.getPath();
+      path.push(posInicial.getPosition());
+      var lat = posInicial.getPosition().lat();
+      var lng = posInicial.getPosition().lng();
+      for (var i = 0; i < 100; i++) {
+        var locat = new google.maps.LatLng(lat+(i/1000),lng);
+        path.push(locat);
+      };
 
-  // Because path is an MVCArray, we can simply append a new coordinate
-  // and it will automatically appear.
-  console.log(map.getCenter());
-  path.push(map.getCenter());
-  path.push({lat: -33.5926511, lng: -70.7327125});
-    //};
-    map.addListener('click', addLatLng);
-
+       
+    }
+    else{
+      alertify.error("Debe ingresar una área y una posición inicial");
+    }
   }
-  function addLatLng(event) {
-    var path = poly.getPath();
-
-  // Because path is an MVCArray, we can simply append a new coordinate
-  // and it will automatically appear.
-  path.push(event.latLng);
-
-  // Add a new marker at the new plotted point on the polyline.
-  var marker = new google.maps.Marker({
-    position: event.latLng,
-    title: '#' + path.getLength(),
-    map: map
-  });
-}
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
 async defer></script>
