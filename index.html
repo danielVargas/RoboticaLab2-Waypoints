@@ -34,7 +34,7 @@
   
 </head>
 <body>
-  <div class="alert alert-success" align ="center">Laboratorio 2 Robótica - Drones</div>
+  <div class="alert alert-success" align ="center"><h5>Laboratorio 2 Robótica - Drones</h5></div>
   <div id="map" class="container"></div>
   <div class="container">
     <div class="col">
@@ -42,34 +42,34 @@
         <div class="btn btn-success" onclick="agregarArea();">Indicar Area</div>
         <div class="btn btn-warning" onclick="agregarPosInicial();">Indicar Posición Inicial</div>
         <div class="btn btn-danger" data-toggle="modal" data-target="#myModal">Ingresar Obstáculo</div>
-        <div class="btn btn-primary pull-right">Generar misión</div>
+        <div class="btn btn-primary pull-right" onclick="generarCamino();">Generar misión</div>
       </div>
     </div>
   </div>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Nuevo Obstáculo</h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="largo">Largo</label>
-          <input type="number" name="largo" id="largo" placeholder="metros" min="1" class="form-control">
-          <label for="ancho">Ancho</label>
-          <input type="number" name="ancho" id="ancho" placeholder="metros" min="1" class="form-control">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Nuevo Obstáculo</h4>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary"  onclick="agregarObstaculo();" >Agregar</button>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="largo">Largo</label>
+            <input type="number" name="largo" id="largo" placeholder="metros" min="1" class="form-control">
+            <label for="ancho">Ancho</label>
+            <input type="number" name="ancho" id="ancho" placeholder="metros" min="1" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary"  onclick="agregarObstaculo();" >Agregar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <script>
   var map;
@@ -94,16 +94,16 @@
 
   }
   function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-      } else {
-        alert("Geolocation is not supported by this browser.");
-      }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+      alert("Geolocation is not supported by this browser.");
     }
-    function showPosition(position) {
-      var lat = position.coords.latitude;
-      var lng = position.coords.longitude;
-      map.setCenter(new google.maps.LatLng(lat, lng));
+  }
+  function showPosition(position) {
+    var lat = position.coords.latitude;
+    var lng = position.coords.longitude;
+    map.setCenter(new google.maps.LatLng(lat, lng));
   }
   function agregarArea(){
     if(polygon) polygon.setMap(null);
@@ -152,22 +152,22 @@
     if(posInicial) posInicial.setMap(null);
     var iconBase = 'https://maps.google.com/mapfiles/kml/pal2/';
     posInicial = new google.maps.Marker(
-      {
-          map:map,
-          draggable:true,
-          animation: google.maps.Animation.DROP,
-          position: map.getCenter(),
-          icon: iconBase + 'icon56.png'
+    {
+      map:map,
+      draggable:true,
+      animation: google.maps.Animation.DROP,
+      position: map.getCenter(),
+      icon: iconBase + 'icon56.png'
 
-      });
-      google.maps.event.addListener(posInicial, 'dragend', function() 
-      {
-          posInicial = posInicial
+    });
+    google.maps.event.addListener(posInicial, 'dragend', function() 
+    {
+      posInicial = posInicial
           // Quitar comentario para mirar posición
           //alertify.success(markers[len][2].getPosition().toString());
 
-      });
-      alertify.success("Se ha ingresado posición inicial con éxito");
+        });
+    alertify.success("Se ha ingresado posición inicial con éxito");
   }
   function agregarObstaculo(){
     var largo = $("#largo").val();
@@ -184,27 +184,83 @@
       temp.push([largo,ancho]);
       temp.push(new google.maps.Marker(
       {
-          map:map,
-          draggable:true,
-          animation: google.maps.Animation.DROP,
-          position: map.getCenter(),
-          icon: iconBase + 'schools_maps.png'
+        map:map,
+        draggable:true,
+        animation: google.maps.Animation.DROP,
+        position: map.getCenter(),
+        icon: iconBase + 'schools_maps.png'
 
       }));
-      markers.push(temp)
-      google.maps.event.addListener(markers[len][2], 'dragend', function() 
+      markers.push(temp);
+
+      var infowindow = new google.maps.InfoWindow({
+        content: '<p>Obstáculo N°:' + markers[len][0] + ' Largo: ' + markers[len][1][0] +' Ancho: ' +markers[len][1][1]+'<br> Posición: '+ markers[len][2].getPosition() +'</p>'
+      });
+      google.maps.event.addListener(markers[len][2], 'dragend', function(event) 
       {
-          markers[len][2] = markers[len][2];
+        markers[len][2].setPosition(event.latLng);
           // Quitar comentario para mirar posición
           //alertify.success(markers[len][2].getPosition().toString());
+          infowindow = new google.maps.InfoWindow({
+            content: '<p>Obstáculo N°:' + markers[len][0] + ' Largo: ' + markers[len][1][0] +' Ancho: ' +markers[len][1][1]+'<br> Posición: '+ markers[len][2].getPosition() +'</p>'
+          });
+        });
 
+
+      google.maps.event.addListener(markers[len][2], 'click', function() {
+        infowindow.open(map, markers[len][2]);
+        setTimeout(function() {
+
+          infowindow.close(map);
+        }, 1000);
       });
       alertify.success("Se ha ingresado Obstáculo con éxito");
       $("#myModal").modal('toggle');
     }
   }
-  </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
-  async defer></script>
+////////////////////////////////////////////////////
+///////// ALGORITMO QUE CALCULA EL CAMINO //////////
+////////////////////////////////////////////////////
+var poly;
+function generarCamino() {
+  poly = new google.maps.Polyline({
+    strokeColor: '#FFFF00',
+    strokeOpacity: 1.0,
+    strokeWeight: 3
+  });
+  poly.setMap(map);
+
+   // var newpath = path.getPath();
+    //var pos = map.getCenter();
+    //path.getPath().pusn(pos.latLng);
+    //for (var i = 0; i < 100; i++) {
+      var path = poly.getPath();
+
+  // Because path is an MVCArray, we can simply append a new coordinate
+  // and it will automatically appear.
+  console.log(map.getCenter());
+  path.push(map.getCenter());
+  path.push({lat: -33.5926511, lng: -70.7327125});
+    //};
+    map.addListener('click', addLatLng);
+
+  }
+  function addLatLng(event) {
+    var path = poly.getPath();
+
+  // Because path is an MVCArray, we can simply append a new coordinate
+  // and it will automatically appear.
+  path.push(event.latLng);
+
+  // Add a new marker at the new plotted point on the polyline.
+  var marker = new google.maps.Marker({
+    position: event.latLng,
+    title: '#' + path.getLength(),
+    map: map
+  });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
+async defer></script>
 </body>
 </html>
