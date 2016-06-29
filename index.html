@@ -39,10 +39,73 @@
   <div class="container">
     <div class="col">
       <div class="row">
-        <div class="btn btn-success" onclick="agregarArea();">Indicar Area</div>
-        <div class="btn btn-warning" onclick="agregarPosInicial();">Indicar Posición Inicial</div>
+        <!--div class="btn btn-success" onclick="agregarArea();">Indicar Area</div>
+        <div class="btn btn-warning" onclick="agregarPosInicial();">Indicar Posición Inicial</div-->
+        <div class="btn btn-success" data-toggle="modal" data-target="#myModal3">Indicar Área</div>
+        <div class="btn btn-warning" data-toggle="modal" data-target="#myModal2">Posición inicial</div>
         <div class="btn btn-danger" data-toggle="modal" data-target="#myModal">Ingresar Obstáculo</div>
         <div class="btn btn-primary pull-right" onclick="generarCamino();">Generar misión</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Indicar área</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">           
+            <label for=latitud>Latitud</label>
+            <input type="number" name="latitud" id="latitudA" class="form-control">
+            <label for=longitud>Longitud</label>
+            <input type="number" name="longitud" id="longitudA" class="form-control">
+            <label for=latitud>Latitud</label>
+            <input type="number" name="latitud" id="latitudB" class="form-control">
+            <label for=longitud>Longitud</label>
+            <input type="number" name="longitud" id="longitudB" class="form-control">
+            <label for=latitud>Latitud</label>
+            <input type="number" name="latitud" id="latitudC" class="form-control">
+            <label for=longitud>Longitud</label>
+            <input type="number" name="longitud" id="longitudC" class="form-control">
+            <label for=latitud>Latitud</label>
+            <input type="number" name="latitud" id="latitudD" class="form-control">
+            <label for=longitud>Longitud</label>
+            <input type="number" name="longitud" id="longitudD" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary"  onclick="agregarArea();" >Agregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Posición inicial</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">           
+            <label for=latitud>Latitud</label>
+            <input type="number" name="latitud" id="latitudIni" class="form-control">
+            <label for=longitud>Longitud</label>
+            <input type="number" name="longitud" id="longitudIni" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary"  onclick="agregarPosInicial();" >Agregar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -61,6 +124,10 @@
             <input type="number" name="largo" id="largo" placeholder="metros" min="1" class="form-control">
             <label for="ancho">Ancho</label>
             <input type="number" name="ancho" id="ancho" placeholder="metros" min="1" class="form-control">
+            <label for=latitud>Latitud</label>
+            <input type="number" name="latitud" id="latitud" class="form-control">
+            <label for=longitud>Longitud</label>
+            <input type="number" name="longitud" id="longitud" class="form-control">
           </div>
         </div>
         <div class="modal-footer">
@@ -107,8 +174,23 @@
   }
   function agregarArea(){
     if(polygon) polygon.setMap(null);
-    var current = map.getCenter();
-    current =  [{lat: current.lat(), lng: current.lng()},{lat: current.lat(), lng: current.lng()}];
+    var longitudA = $("#longitudA").val();
+    var latitudA = $("#latitudA").val();
+    var longitudB = $("#longitudB").val();
+    var latitudB = $("#latitudB").val();
+    var longitudC = $("#longitudC").val();
+    var latitudC = $("#latitudC").val();
+    var longitudD = $("#longitudD").val();
+    var latitudD = $("#latitudD").val();
+
+    var ptoA = new google.maps.LatLng(latitudA,longitudA);
+    var ptoB =new google.maps.LatLng(latitudB,longitudB);
+    var ptoC =new google.maps.LatLng(latitudC,longitudC);
+    var ptoD =new google.maps.LatLng(latitudD,longitudD);
+
+  var current=[ptoA,ptoB,ptoC,ptoD];
+    //var current = map.getCenter();
+    //current =  [{lat: current.lat(), lng: current.lng()},{lat: current.lat(), lng: current.lng()}];
     polygon = new google.maps.Polygon({
       map: map,
       paths: current,
@@ -117,9 +199,9 @@
       strokeWeight: 2,
       fillColor: '#FF0000',
       fillOpacity: 0.35,
-      draggable: true,
+      //draggable: true,
       geodesic: true,
-      editable: true
+      //editable: true
     });
     infoWindow.setContent("Se ha ingresado una nueva area");
     infoWindow.setPosition(map.getCenter());
@@ -134,7 +216,8 @@
     google.maps.event.addListener(polygon.getPath(), "insert_at", getPath);
     google.maps.event.addListener(polygon.getPath(), "remove_at", getPath);
     google.maps.event.addListener(polygon.getPath(), "set_at", getPath);
-
+    alertify.success("Se ha ingresado un área");
+    $("#myModal3").modal('toggle');
   }
   function getPath(){
     area= polygon.getPath();
@@ -150,13 +233,16 @@
   }
   function agregarPosInicial(){
     if(posInicial) posInicial.setMap(null);
+    var longitud = $("#longitudIni").val();
+    var latitud = $("#latitudIni").val();
+    var posIni=new google.maps.LatLng(latitud,longitud);
     var iconBase = 'https://maps.google.com/mapfiles/kml/pal2/';
     posInicial = new google.maps.Marker(
     {
       map:map,
-      draggable:true,
+      //draggable:true,
       animation: google.maps.Animation.DROP,
-      position: map.getCenter(),
+      position: posIni,
       icon: iconBase + 'icon56.png'
 
     });
@@ -168,10 +254,14 @@
 
         });
     alertify.success("Se ha ingresado posición inicial con éxito");
+    $("#myModal2").modal('toggle');
   }
   function agregarObstaculo(){
     var largo = $("#largo").val();
     var ancho = $("#ancho").val();
+    var latitud = $("#latitud").val();
+    var longitud = $("#longitud").val();    
+    var marcador=new google.maps.LatLng(latitud,longitud);
 
     if (ancho < 1 || largo < 1 ){
       alertify.error('Debe ingresar alto o ancho');
@@ -185,9 +275,9 @@
       temp.push(new google.maps.Marker(
       {
         map:map,
-        draggable:true,
+        //draggable:true,
         animation: google.maps.Animation.DROP,
-        position: map.getCenter(),
+        position: marcador,
         icon: iconBase + 'schools_maps.png'
 
       }));
@@ -223,7 +313,10 @@
 ////////////////////////////////////////////////////
 var poly;
 function generarCamino() {
-  if(polygon != null && area!= null &&  posInicial!= null){
+  console.log(polygon);
+  console.log(area);
+  console.log(posInicial);
+  if(polygon != null &&  posInicial!= null){
       poly = new google.maps.Polyline({
       strokeColor: '#FFFF00',
       strokeOpacity: 1.0,
