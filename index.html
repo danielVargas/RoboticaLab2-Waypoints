@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
   <title>Robotica Lab 2</title>
@@ -311,11 +311,36 @@
 ////////////////////////////////////////////////////
 ///////// ALGORITMO QUE CALCULA EL CAMINO //////////
 ////////////////////////////////////////////////////
-var poly;
-function generarCamino() {
-  console.log(polygon);
-  console.log(area);
-  console.log(posInicial);
+  var poly;
+
+
+  function generarCamino() {
+    //console.log(polygon);
+    //console.log(area);
+    //console.log(posInicial);
+
+    var vertice_area_i_abajo =  [-33.5940987,-70.7307668];
+    var vertice_area_i_arriba = [-33.5840987,-70.7307668];
+    var vertice_area_d_abajo =  [-33.5940987,-70.7207668];
+    var vertice_area_d_arriba = [-33.5840987,-70.7207668];
+
+    var vertices_area = [vertice_area_i_abajo,vertice_area_i_arriba,vertice_area_d_abajo,vertice_area_d_arriba];
+    //[LAT,LONG],[LARGO, ANCHO]
+    var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]]]; //
+    //obstaculo 2: -33.588607, -70.726295
+
+    for (var i=0; i<arreglo_obstaculos.length; i++) {
+      console.log("obstaculo "+i+", latitud: "+arreglo_obstaculos[i][0][0]);
+      console.log("obstaculo "+i+", longitud:"+arreglo_obstaculos[i][0][1]);
+
+      console.log("obstaculo "+i+", ancho: "+arreglo_obstaculos[i][1][0]);
+      console.log("obstaculo "+i+", largo: "+arreglo_obstaculos[i][1][1]);
+    };
+    
+    calcularCamino(vertices_area,arreglo_obstaculos);
+
+
+/*
   if(polygon != null &&  posInicial!= null){
       poly = new google.maps.Polyline({
       strokeColor: '#FFFF00',
@@ -337,7 +362,146 @@ function generarCamino() {
     else{
       alertify.error("Debe ingresar una área y una posición inicial");
     }
+  */
   }
+
+  var un_metro = 0.0000089;
+  var tamano_grilla = 12; //numeros enteros
+
+  function calcularCamino(area, obstaculos){
+    var vertice_i_abajo_metros  = [area[0][0]/un_metro,area[0][1]/un_metro];
+    var vertice_i_arriba_metros = [area[1][0]/un_metro,area[1][1]/un_metro];
+    var vertice_d_abajo_metros  = [area[2][0]/un_metro,area[2][1]/un_metro];
+    var vertice_d_arriba_metros = [area[3][0]/un_metro,area[3][1]/un_metro];
+
+    var area_metros = [vertice_i_abajo_metros,vertice_i_arriba_metros,vertice_d_abajo_metros,vertice_d_arriba_metros];
+
+    //TERCER NUMERO= 0: desconocido, 1: se debe visitar, 2: ya fue visitado, -1: posee obstaculo
+    var grilla = crearGrilla(area);
+
+    //var respuesta = revisarGrilla(-33.592599,-70.725967,obstaculos);
+    //console.log("respuesta: "+respuesta);
+
+    //BORRAR DESPUES DE TESTEAR
+    var cantidad_lat = calcularCantidadGrillas(area[0][0],area[1][0]);
+    var cantidad_lon = calcularCantidadGrillas(area[0][1],area[2][1]);
+
+
+    for (var i=0; i<cantidad_lon;i++){
+      for (var j=0; j<cantidad_lat;j++){
+        if(revisarGrilla(grilla[i*cantidad_lat+j][0],grilla[i*cantidad_lat+j][1],obstaculos)){
+          grilla[i*cantidad_lat+j][2]="@";
+        }
+        else{
+          grilla[i*cantidad_lat+j][2]="-";          
+        }
+      }
+    };
+
+    for (var i=0; i<cantidad_lon;i++){
+      var palabra = "";
+      for (var j=0; j<cantidad_lat;j++){
+        palabra = palabra+grilla[i*cantidad_lat+j][2];
+      }
+      if(i % 2 == 0)
+        console.log(palabra+";");
+      else
+        console.log(palabra+":");
+    }
+
+  }
+
+  function crearGrilla(area){
+    var puntos_grilla = [];
+
+    var cantidad_lat = calcularCantidadGrillas(area[0][0],area[1][0]);
+    var cantidad_lon = calcularCantidadGrillas(area[0][1],area[2][1]);
+
+    var punto_inicial = [area[0][0]+un_metro*tamano_grilla/2, area[0][1]+un_metro*tamano_grilla/2];
+
+    for(var i=0;i<cantidad_lat; i++){
+      for(var j=0;j<cantidad_lon;j++){
+        var latitud_actual = (punto_inicial[0]+i*un_metro*tamano_grilla).toFixed(7);
+        var longitud_actual = (punto_inicial[1]+j*un_metro*tamano_grilla).toFixed(7);
+        var punto = []; //0: desconocido, 1: se debe visitar, 2: ya fue visitado, -1: posee obstaculo
+        punto.push(latitud_actual);
+        punto.push(longitud_actual);
+        punto.push("0");
+        //console.log("["+punto[0]+","+punto[1]+"], ");
+        puntos_grilla.push(punto);
+      }
+    }
+    /*
+    console.log("puntos");
+    for (var i=0; i<cantidad_lat*cantidad_lon;i++){
+      var palabra="["+puntos_grilla[i][0]+","+puntos_grilla[i][1]+"], ";
+      console.log(palabra);
+    };
+  */
+    return puntos_grilla;
+  }
+
+  function calcularCantidadGrillas(inicio, fin){
+    var cantidad;
+    cantidad = Math.floor((fin-inicio)/(un_metro*tamano_grilla));
+    //console.log("cantidad de grillas: "+cantidad);
+    return cantidad;
+  }
+
+  function revisarGrilla(centro_area_lat,centro_area_lon,obstaculos){
+    var respuesta = false;
+    var inicio_area_lat = centro_area_lat-tamano_grilla/2*un_metro;
+    var inicio_area_lon = centro_area_lon-tamano_grilla/2*un_metro;
+
+    for(var i=0;i<=tamano_grilla;i++){
+      for(var j=0;j<=tamano_grilla;j++){
+        respuesta = revisarPunto(inicio_area_lat+i*un_metro,inicio_area_lon+j*un_metro, obstaculos);
+        if(respuesta){
+          //console.log("pase por aqui");
+          return respuesta;
+        }
+      }
+    }
+    return respuesta;
+  }
+
+  function revisarPunto(centro_lat_punto,centro_lon_punto, obstaculos){
+    var temp_centro_lat;
+    var temp_centro_lon;
+    var temp_mitad_largo;
+    var temp_mitad_ancho;
+
+    var abajo;
+    var arriba;
+    var izquierda;
+    var derecha;
+
+    for (var i=0; i<obstaculos.length; i++) {
+      temp_centro_lat = obstaculos[i][0][0];
+      temp_centro_lon = obstaculos[i][0][1];
+      temp_mitad_largo = obstaculos[i][1][0]*un_metro/2;
+      temp_mitad_ancho = obstaculos[i][1][1]*un_metro/2;
+
+      abajo = temp_centro_lat-temp_mitad_largo;
+      arriba = temp_centro_lat+temp_mitad_largo;
+      izquierda = temp_centro_lon-temp_mitad_ancho;
+      derecha = temp_centro_lon+temp_mitad_ancho;
+
+      if(centro_lat_punto >= abajo){
+        if(centro_lat_punto <= arriba){
+          if(centro_lon_punto >= izquierda){
+            if(centro_lon_punto <= derecha){
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+
+
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
 async defer></script>
