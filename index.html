@@ -42,7 +42,7 @@
         <!--div class="btn btn-success" onclick="agregarArea();">Indicar Area</div>
         <div class="btn btn-warning" onclick="agregarPosInicial();">Indicar Posición Inicial</div-->
           <div class="btn btn-success" data-toggle="modal" data-target="#myModal3">Indicar Área</div>
-          <div class="btn btn-warning" data-toggle="modal" data-target="#myModal2">Posición inicial</div>
+          <div class="btn btn-warning" onclick="verificar();" >Posición inicial</div>
           <div class="btn btn-danger" data-toggle="modal" data-target="#myModal">Ingresar Obstáculo</div>
           <div class="btn btn-primary pull-right" onclick="generarCamino();">Generar misión</div>
         </div>
@@ -134,12 +134,11 @@
         <h4 class="modal-title" id="myModalLabel">Posición inicial</h4>
       </div>
       <div class="modal-body">
-        <div class="form-group">           
-          <label for=latitud>Latitud</label>
-          <input type="number" name="latitud" id="latitudIni" class="form-control">
-          <label for=longitud>Longitud</label>
-          <input type="number" name="longitud" id="longitudIni" class="form-control">
-        </div>
+      <div class="form-group">
+        <label for="select1">Seleccione el vértice</label>
+        <select class="form-control" id="select1">
+        </select>
+      </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -243,8 +242,8 @@ function agregarArea(){
       //editable: true
     });
     infoWindow.setContent("Se ha ingresado una nueva area");
-    infoWindow.setPosition(map.getCenter());
-
+    infoWindow.setPosition(ptoA);
+    map.setCenter(ptoA);
     infoWindow.open(map);
 
     setTimeout(function() {
@@ -270,10 +269,33 @@ function agregarArea(){
       infoWindow.close(map);
     }, 1500);
   }
+  var selectedposincial;
+  var vertices;
+  function verificar() {
+    if(polygon ==null && area == null){
+      alertify.error("Debe ingresar un área primero");
+    }else{
+      if(vertices == null){
+        vertices = polygon.getPath().b;
+        selectedposincial = vertices[0];
+        $.each(vertices, function (i, vertice) {
+          $('#select1').append($('<option>', { 
+              value: i,
+              text : vertice.lng()+","+vertice.lat()
+            }));
+        });
+      }
+      $("#myModal2").modal();
+    }
+  }
+  $( "#select1" ).change(function() {
+    var selected = $( "#select1" ).val();
+    selectedposincial = vertices[selected];
+  });
   function agregarPosInicial(){
     if(posInicial) posInicial.setMap(null);
-    var longitud = $("#longitudIni").val();
-    var latitud = $("#latitudIni").val();
+    var longitud = selectedposincial.lng();
+    var latitud = selectedposincial.lat();
     var posIni=new google.maps.LatLng(latitud,longitud);
     var iconBase = 'https://maps.google.com/mapfiles/kml/pal2/';
     posInicial = new google.maps.Marker(
