@@ -366,6 +366,7 @@ function agregarArea(){
         }, 1000);
       });
       alertify.success("Se ha ingresado Obstáculo con éxito");
+      console.log(markers);
       $("#myModal").modal('toggle');
     }
   }
@@ -379,7 +380,18 @@ function generarCamino() {
     //console.log(polygon);
     //console.log(area);
     //console.log(posInicial);
+    var arreglo_obstaculos = [];
+    for (var i = 0; i < markers.length; i++) {
+      var temp = []
+      var area= [markers[i][1][0],markers[i][1][1]]
+      var latlng = [markers[i][2].getPosition().lat(),markers[i][2].getPosition().lng()]
+      temp.push(latlng);
+      temp.push(area);
+      arreglo_obstaculos.push(temp);
+    };
+    
 
+     
     var vertice_area_i_abajo =  [-33.5940987,-70.7307668];
     var vertice_area_i_arriba = [-33.5840987,-70.7307668];
     var vertice_area_d_abajo =  [-33.5940987,-70.7207668];
@@ -387,7 +399,7 @@ function generarCamino() {
 
     var vertices_area = [vertice_area_i_abajo,vertice_area_i_arriba,vertice_area_d_abajo,vertice_area_d_arriba];
     //[LAT,LONG],[LARGO, ANCHO]
-    var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]]]; //
+    //var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]]]; //
     //obstaculo 2: -33.588607, -70.726295
 
     for (var i=0; i<arreglo_obstaculos.length; i++) {
