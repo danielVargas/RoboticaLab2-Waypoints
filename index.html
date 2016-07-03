@@ -41,152 +41,191 @@
       <div class="row">
         <!--div class="btn btn-success" onclick="agregarArea();">Indicar Area</div>
         <div class="btn btn-warning" onclick="agregarPosInicial();">Indicar Posición Inicial</div-->
-        <div class="btn btn-success" data-toggle="modal" data-target="#myModal3">Indicar Área</div>
-        <div class="btn btn-warning" data-toggle="modal" data-target="#myModal2">Posición inicial</div>
-        <div class="btn btn-danger" data-toggle="modal" data-target="#myModal">Ingresar Obstáculo</div>
-        <div class="btn btn-primary pull-right" onclick="generarCamino();">Generar misión</div>
+          <div class="btn btn-success" data-toggle="modal" data-target="#myModal3">Indicar Área</div>
+          <div class="btn btn-warning" data-toggle="modal" data-target="#myModal2">Posición inicial</div>
+          <div class="btn btn-danger" data-toggle="modal" data-target="#myModal">Ingresar Obstáculo</div>
+          <div class="btn btn-primary pull-right" onclick="generarCamino();">Generar misión</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Indicar área</h4>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">           
-            <label for=latitud>Latitud</label>
-            <input type="number" name="latitud" id="latitudA" class="form-control">
-            <label for=longitud>Longitud</label>
-            <input type="number" name="longitud" id="longitudA" class="form-control">
-            <label for=latitud>Latitud</label>
-            <input type="number" name="latitud" id="latitudB" class="form-control">
-            <label for=longitud>Longitud</label>
-            <input type="number" name="longitud" id="longitudB" class="form-control">
-            <label for=latitud>Latitud</label>
-            <input type="number" name="latitud" id="latitudC" class="form-control">
-            <label for=longitud>Longitud</label>
-            <input type="number" name="longitud" id="longitudC" class="form-control">
-            <label for=latitud>Latitud</label>
-            <input type="number" name="latitud" id="latitudD" class="form-control">
-            <label for=longitud>Longitud</label>
-            <input type="number" name="longitud" id="longitudD" class="form-control">
+    <!-- Modal -->
+    <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document" style="width: 85%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Indicar área</h4>
           </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <div class="row">
+                <div class="col col-md-6">
+                  <label for="ptoa">Punto A</label>
+                  <div  id="ptoa"  class="row">
+                   <div class="col col-md-6">
+                    <label for=latitud>Latitud</label>
+                    <input type="number" name="latitud" id="latitudA" class="form-control" value="-33.362596">
+                  </div>
+                  <div class="col col-md-6">
+                   <label for=longitud>Longitud</label>
+                   <input type="number" name="longitud" id="longitudA" class="form-control"  value="-70.723603">
+                 </div>
+               </div>
+               <br>
+               <label for="ptob">Punto B</label>
+               <div  id="ptob"  class="row">
+                 <div class="col col-md-6">
+                  <label for=latitud>Latitud</label>
+                  <input type="number" name="latitud" id="latitudB" class="form-control"  value="-33.382596">
+                </div>
+                <div class="col col-md-6">
+                 <label for=longitud>Longitud</label>
+                 <input type="number" name="longitud" id="longitudB" class="form-control"  value="-70.723603">
+               </div>
+             </div>
+             <br>
+             <label for="ptoc">Punto C</label>
+             <div  id="ptoc"  class="row">
+               <div class="col col-md-6">
+                <label for=latitud>Latitud</label>
+                <input type="number" name="latitud" id="latitudC" class="form-control"  value="-33.382596">
+              </div>
+              <div class="col col-md-6">
+                <label for=longitud>Longitud</label>
+                <input type="number" name="longitud" id="longitudC" class="form-control"  value="-70.783603">
+              </div>
+            </div>
+            <br>
+            <label for="ptod">Punto D</label>
+            <div  id="ptod"  class="row">
+             <div class="col col-md-6">
+              <label for=latitud>Latitud</label>
+              <input type="number" name="latitud" id="latitudD" class="form-control"  value="-33.362596">
+            </div>
+            <div class="col col-md-6">
+             <label for=longitud>Longitud</label>
+             <input type="number" name="longitud" id="longitudD" class="form-control"  value="-70.783603">
+           </div>
+         </div>
+       </div>
+       <div class="col col-md-6">
+         <img src="formato_de_ingreso.png" alt="">
+       </div>
+     </div>
+
+   </div>
+ </div>
+ <div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+  <button type="button" class="btn btn-primary"  onclick="agregarArea();" >Agregar</button>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Posición inicial</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">           
+          <label for=latitud>Latitud</label>
+          <input type="number" name="latitud" id="latitudIni" class="form-control">
+          <label for=longitud>Longitud</label>
+          <input type="number" name="longitud" id="longitudIni" class="form-control">
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary"  onclick="agregarArea();" >Agregar</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary"  onclick="agregarPosInicial();" >Agregar</button>
       </div>
     </div>
   </div>
+</div>
 
-
-  <!-- Modal -->
-  <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Posición inicial</h4>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Nuevo Obstáculo</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="largo">Largo</label>
+          <input type="number" name="largo" id="largo" placeholder="metros" min="1" class="form-control">
+          <label for="ancho">Ancho</label>
+          <input type="number" name="ancho" id="ancho" placeholder="metros" min="1" class="form-control">
+          <label for=latitud>Latitud</label>
+          <input type="number" name="latitud" id="latitud" class="form-control">
+          <label for=longitud>Longitud</label>
+          <input type="number" name="longitud" id="longitud" class="form-control">
         </div>
-        <div class="modal-body">
-          <div class="form-group">           
-            <label for=latitud>Latitud</label>
-            <input type="number" name="latitud" id="latitudIni" class="form-control">
-            <label for=longitud>Longitud</label>
-            <input type="number" name="longitud" id="longitudIni" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary"  onclick="agregarPosInicial();" >Agregar</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary"  onclick="agregarObstaculo();" >Agregar</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Nuevo Obstáculo</h4>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="largo">Largo</label>
-            <input type="number" name="largo" id="largo" placeholder="metros" min="1" class="form-control">
-            <label for="ancho">Ancho</label>
-            <input type="number" name="ancho" id="ancho" placeholder="metros" min="1" class="form-control">
-            <label for=latitud>Latitud</label>
-            <input type="number" name="latitud" id="latitud" class="form-control">
-            <label for=longitud>Longitud</label>
-            <input type="number" name="longitud" id="longitud" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary"  onclick="agregarObstaculo();" >Agregar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<script>
+var map;
+var infoWindow;
+var polygon;
+var area;
+var posInicial;
+var markers=[];
+function initMap() {
 
-  <script>
-  var map;
-  var infoWindow;
-  var polygon;
-  var area;
-  var posInicial;
-  var markers=[];
-  function initMap() {
+  var myLatLng = {lat: -33.5926511, lng: -70.7327125};
 
-    var myLatLng = {lat: -33.5926511, lng: -70.7327125};
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 13,
+    center: myLatLng,
+    mapTypeId: google.maps.MapTypeId.SATELLITE
 
-    map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 13,
-      center: myLatLng,
-      mapTypeId: google.maps.MapTypeId.SATELLITE
+  });
+  getLocation();
 
-    });
-    getLocation();
+  infoWindow = new google.maps.InfoWindow();
 
-    infoWindow = new google.maps.InfoWindow();
-
+}
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    alert("Geolocation is not supported by this browser.");
   }
-  function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  }
-  function showPosition(position) {
-    var lat = position.coords.latitude;
-    var lng = position.coords.longitude;
-    map.setCenter(new google.maps.LatLng(lat, lng));
-  }
-  function agregarArea(){
-    if(polygon) polygon.setMap(null);
-    var longitudA = $("#longitudA").val();
-    var latitudA = $("#latitudA").val();
-    var longitudB = $("#longitudB").val();
-    var latitudB = $("#latitudB").val();
-    var longitudC = $("#longitudC").val();
-    var latitudC = $("#latitudC").val();
-    var longitudD = $("#longitudD").val();
-    var latitudD = $("#latitudD").val();
+}
+function showPosition(position) {
+  var lat = position.coords.latitude;
+  var lng = position.coords.longitude;
+  map.setCenter(new google.maps.LatLng(lat, lng));
+}
+function agregarArea(){
+  if(polygon) polygon.setMap(null);
+  var longitudA = $("#longitudA").val();
+  var latitudA = $("#latitudA").val();
+  var longitudB = $("#longitudB").val();
+  var latitudB = $("#latitudB").val();
+  var longitudC = $("#longitudC").val();
+  var latitudC = $("#latitudC").val();
+  var longitudD = $("#longitudD").val();
+  var latitudD = $("#latitudD").val();
 
-    var ptoA = new google.maps.LatLng(latitudA,longitudA);
-    var ptoB =new google.maps.LatLng(latitudB,longitudB);
-    var ptoC =new google.maps.LatLng(latitudC,longitudC);
-    var ptoD =new google.maps.LatLng(latitudD,longitudD);
+  var ptoA = new google.maps.LatLng(latitudA,longitudA);
+  var ptoB =new google.maps.LatLng(latitudB,longitudB);
+  var ptoC =new google.maps.LatLng(latitudC,longitudC);
+  var ptoD =new google.maps.LatLng(latitudD,longitudD);
 
   var current=[ptoA,ptoB,ptoC,ptoD];
     //var current = map.getCenter();
@@ -311,10 +350,10 @@
 ////////////////////////////////////////////////////
 ///////// ALGORITMO QUE CALCULA EL CAMINO //////////
 ////////////////////////////////////////////////////
-  var poly;
+var poly;
 
 
-  function generarCamino() {
+function generarCamino() {
     //console.log(polygon);
     //console.log(area);
     //console.log(posInicial);
@@ -362,7 +401,7 @@
     else{
       alertify.error("Debe ingresar una área y una posición inicial");
     }
-  */
+    */
   }
 
   var un_metro = 0.0000089;
@@ -437,7 +476,7 @@
       var palabra="["+puntos_grilla[i][0]+","+puntos_grilla[i][1]+"], ";
       console.log(palabra);
     };
-  */
+    */
     return puntos_grilla;
   }
 
@@ -502,8 +541,8 @@
 
 
 
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
-async defer></script>
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
+  async defer></script>
 </body>
 </html>
