@@ -366,7 +366,6 @@ function agregarArea(){
         }, 1000);
       });
       alertify.success("Se ha ingresado Obstáculo con éxito");
-      console.log(markers);
       $("#myModal").modal('toggle');
     }
   }
@@ -379,12 +378,13 @@ var poly;
 function generarCamino() {
     //console.log(polygon);
     //console.log(area);
-    //console.log(posInicial);
+    ///////////// Variables arregladas!!!!!!!!!
+    var pos_inicial = [posInicial.getPosition().lat(),posInicial.getPosition().lng()];
     var arreglo_obstaculos = [];
     for (var i = 0; i < markers.length; i++) {
-      var temp = []
-      var area= [markers[i][1][0],markers[i][1][1]]
-      var latlng = [markers[i][2].getPosition().lat(),markers[i][2].getPosition().lng()]
+      var temp = [];
+      var area= [markers[i][1][0],markers[i][1][1]];
+      var latlng = [markers[i][2].getPosition().lat(),markers[i][2].getPosition().lng()];
       temp.push(latlng);
       temp.push(area);
       arreglo_obstaculos.push(temp);
