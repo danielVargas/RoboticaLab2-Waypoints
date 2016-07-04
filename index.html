@@ -379,7 +379,7 @@ function generarCamino() {
     //console.log(polygon);
     //console.log(area);
     ///////////// Variables arregladas!!!!!!!!!
-    var pos_inicial = [posInicial.getPosition().lat(),posInicial.getPosition().lng()];
+    //var pos_inicial = [posInicial.getPosition().lat(),posInicial.getPosition().lng()];
     var arreglo_obstaculos = [];
     for (var i = 0; i < markers.length; i++) {
       var temp = [];
@@ -390,7 +390,7 @@ function generarCamino() {
       arreglo_obstaculos.push(temp);
     };
     
-
+    var arreglo_obstaculos = [];
      
     var vertice_area_i_abajo =  [-33.5940987,-70.7307668];
     var vertice_area_i_arriba = [-33.5840987,-70.7307668];
@@ -399,18 +399,17 @@ function generarCamino() {
 
     var vertices_area = [vertice_area_i_abajo,vertice_area_i_arriba,vertice_area_d_abajo,vertice_area_d_arriba];
     //[LAT,LONG],[LARGO, ANCHO]
-    //var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]]]; //
+    var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]],[[-33.587309, -70.722954],[2,3]]]; //
+
+
     //obstaculo 2: -33.588607, -70.726295
 
     for (var i=0; i<arreglo_obstaculos.length; i++) {
-      console.log("obstaculo "+i+", latitud: "+arreglo_obstaculos[i][0][0]);
-      console.log("obstaculo "+i+", longitud:"+arreglo_obstaculos[i][0][1]);
-
-      console.log("obstaculo "+i+", ancho: "+arreglo_obstaculos[i][1][0]);
-      console.log("obstaculo "+i+", largo: "+arreglo_obstaculos[i][1][1]);
+      console.log("obstaculo "+i+": ["+arreglo_obstaculos[i][0][0]+",\t"+arreglo_obstaculos[i][0][1]+"],\tancho: "+arreglo_obstaculos[i][1][0]+",\tlargo: "+arreglo_obstaculos[i][1][1]);
     };
     
-    calcularCamino(vertices_area,arreglo_obstaculos);
+    var punto_inicial = vertice_area_i_abajo;
+    calcularCamino(vertices_area,arreglo_obstaculos,punto_inicial);
 
 
 /*
@@ -440,17 +439,20 @@ function generarCamino() {
 
   var un_metro = 0.0000089;
   var tamano_grilla = 12; //numeros enteros
+  var grilla_global = [];
+  var index_global = 0;
+  //var ruta = [];
 
-  function calcularCamino(area, obstaculos){
-    var vertice_i_abajo_metros  = [area[0][0]/un_metro,area[0][1]/un_metro];
-    var vertice_i_arriba_metros = [area[1][0]/un_metro,area[1][1]/un_metro];
-    var vertice_d_abajo_metros  = [area[2][0]/un_metro,area[2][1]/un_metro];
-    var vertice_d_arriba_metros = [area[3][0]/un_metro,area[3][1]/un_metro];
-
-    var area_metros = [vertice_i_abajo_metros,vertice_i_arriba_metros,vertice_d_abajo_metros,vertice_d_arriba_metros];
+  function calcularCamino(area, obstaculos, punto_inicial){
 
     //TERCER NUMERO= 0: desconocido, 1: se debe visitar, 2: ya fue visitado, -1: posee obstaculo
-    var grilla = crearGrilla(area);
+    var grilla = crearGrilla(area,obstaculos);
+
+    grilla_global
+
+    for(var i=0; i<grilla.length; i++) {
+      grilla_global.push(grilla[i][2]);
+    };
 
     //var respuesta = revisarGrilla(-33.592599,-70.725967,obstaculos);
     //console.log("respuesta: "+respuesta);
@@ -460,17 +462,9 @@ function generarCamino() {
     var cantidad_lon = calcularCantidadGrillas(area[0][1],area[2][1]);
 
 
-    for (var i=0; i<cantidad_lon;i++){
-      for (var j=0; j<cantidad_lat;j++){
-        if(revisarGrilla(grilla[i*cantidad_lat+j][0],grilla[i*cantidad_lat+j][1],obstaculos)){
-          grilla[i*cantidad_lat+j][2]="@";
-        }
-        else{
-          grilla[i*cantidad_lat+j][2]="-";          
-        }
-      }
-    };
 
+/*
+    //IMPRIMIR MAPEO
     for (var i=0; i<cantidad_lon;i++){
       var palabra = "";
       for (var j=0; j<cantidad_lat;j++){
@@ -481,10 +475,242 @@ function generarCamino() {
       else
         console.log(palabra+":");
     }
+*/
+    
+    //console.log("punto          [-33.5840987,-70.7207668]");
+    //console.log("punto cercano: ["+grilla[index_cercano[0]][0]+","+grilla[index_cercano[0]][1]+"] , diferencia: ["+index_cercano[1]+", "+index_cercano[2]+"]");
 
+    //var izq = derecha(grilla,185,cantidad_lat,cantidad_lon);
+    console.log("Celdas lon: "+cantidad_lon+", celdas lat: "+cantidad_lat+", tamaño grilla (mts): "+tamano_grilla);
+    //console.log("Resultado izquierda: "+izq);
+
+    var index_inicial = buscarPuntoMasCercano(punto_inicial[0],punto_inicial[1],grilla);
+    var direccionLon = buscarDireccionLon(index_inicial,grilla,area);
+    var direccionLat = buscarDireccionLat(index_inicial,grilla,area);
+    console.log("se encuentra: "+direccionLon+", "+direccionLat);
+/*
+    for (var i=0; i<grilla.length; i++) {
+      
+      grilla[i]
+    };
+*/
+
+    var direccionLon_temp = direccionLon;
+    var direccionLat_temp = direccionLat;
+    var index_temp;
+    index_global = index_inicial;
+
+
+    //bajarEnGrilla(8557,grilla,area,cantidad_lat,cantidad_lon);
+
+
+
+
+
+    for(var i=0;i<cantidad_lon;i++) {
+      if(direccionLat_temp=="abajo"){
+        //console.log("global abajo->arriba: "+index_global);
+        subirEnGrilla(index_global,grilla,area,cantidad_lat,cantidad_lon);
+        direccionLat_temp = "arriba";
+
+      }
+      else if(direccionLat_temp=="arriba"){
+        //console.log("global \t\tarriba->abajo: "+index_global);
+        bajarEnGrilla(index_global,grilla,area,cantidad_lat,cantidad_lon);
+        direccionLat_temp = "abajo";
+      }
+      
+      if(direccionLon_temp=="izquierda"){
+        //console.log("se mueve a la derecha");
+        index_temp = derecha(grilla,index_global,cantidad_lat,cantidad_lon);
+      }
+      else if(direccionLon_temp=="derecha"){
+        //console.log("se mueve a la izquierda");
+        index_temp = izquierda(grilla,index_global,cantidad_lat,cantidad_lon);
+      }
+      
+      
+      if(index_temp!=-1 && index_temp!=-2){
+        //console.log("index_temp: "+index_temp);
+        index_global = index_temp;
+      }
+      else if (index_temp==-1){
+
+      }
+      else if (index_temp==-2){
+        console.log("-2 girando");
+      }
+      
+    }
+
+
+    //IMPRIMIR MAPEO
+    for (var i=0; i<cantidad_lon;i++){
+      var palabra = "";
+      for (var j=0; j<cantidad_lat;j++){
+        palabra = palabra+grilla_global[i*cantidad_lat+j];
+      }
+      if(i % 2 == 0)
+        console.log(palabra+";");
+      else
+        console.log(palabra+":");
+    }
+
+    /*
+    console.log("Ruta lenght: "+ruta.length);
+    for (var i=0;i<ruta.length; i++) {
+      console.log("["+ruta[i][0]+", "+ruta[i][1]+"]");
+    };
+    */
   }
 
-  function crearGrilla(area){
+
+
+  function subirEnGrilla(index_actual,grilla,area,cantidad_lat,cantidad_lon){
+    grilla_global[index_actual] = "^";
+
+    //ruta.push([grilla[index_actual][0],grilla[index_actual][1]]);
+    //console.log("1index_actual: "+index_actual+", index_global: "+index_global);
+    index_global = index_actual;
+    //console.log("2index_actual: "+index_actual+", index_global: "+index_global);
+
+    var index_nuevo = subir(grilla,index_actual,cantidad_lat,cantidad_lon)
+
+    if(index_nuevo!=-1 && index_nuevo!=-2){
+      //console.log("index: "+index_nuevo),
+      subirEnGrilla(index_nuevo,grilla,area,cantidad_lat,cantidad_lon)
+    }
+    else if(index_nuevo==-1){
+
+    }
+    else if(index_nuevo==-2){
+      console.log("-2 obstaculo.subiendo");
+    }
+    else{
+      console.log("Error 1: Ocurrio algo inesperado.");
+    }
+  }
+  function bajarEnGrilla(index_actual,grilla,area,cantidad_lat,cantidad_lon){
+    grilla_global[index_actual] = "¨";
+    //console.log("index actual: "+index_actual);
+    var index_nuevo = bajar(grilla,index_actual,cantidad_lat,cantidad_lon);
+    //console.log("bajarEnGrilla index: "+index_nuevo);
+
+    index_global = index_actual;
+
+    if(index_nuevo!=-1 && index_nuevo!=-2){
+      bajarEnGrilla(index_nuevo,grilla,area,cantidad_lat,cantidad_lon)
+    }
+    else if(index_nuevo==-1){
+
+    }
+    else if(index_nuevo==-2){
+      console.log("-2 obstaculo.bajando");
+    }
+    else{
+      console.log("Error 2: Ocurrio algo inesperado.");
+    }
+  }
+
+
+
+
+
+
+  function buscarDireccionLat(index_inicial,grilla,area){    
+    var diferencia_abajo = Math.abs(area[0][0]-grilla[index_inicial][0]);
+    var diferencia_arriba = Math.abs(area[1][0]-grilla[index_inicial][0]);
+    //console.log("diferencia-izquierda: "+diferencia_izquierda+", diferencia-derecha: "+diferencia_derecha);
+    //console.log("punto inicial ["+grilla[index_inicial][0]+", "+grilla[index_inicial][1]+"]");
+    if(diferencia_abajo<diferencia_arriba){
+      return "abajo";
+    }
+    else
+      return "arriba";
+  }
+
+  function buscarDireccionLon(index_inicial,grilla,area){    
+    var diferencia_izquierda = Math.abs(area[0][1]-grilla[index_inicial][1]);
+    var diferencia_derecha = Math.abs(area[2][1]-grilla[index_inicial][1]);
+    //console.log("diferencia-izquierda: "+diferencia_izquierda+", diferencia-derecha: "+diferencia_derecha);
+    //console.log("punto inicial ["+grilla[index_inicial][0]+", "+grilla[index_inicial][1]+"]");
+    if(diferencia_izquierda<diferencia_derecha){
+      return "izquierda";
+    }
+    else
+      return "derecha";
+  }
+
+
+  function subir(grilla,index_actual,cantidad_lat,cantidad_lon){
+    if((index_actual+cantidad_lon)>=grilla.length){
+      return -1;
+    }
+    else if(grilla[index_actual+cantidad_lon][2]=="@"){
+      return -2;
+    }
+    else{
+      return (index_actual+cantidad_lon);
+    }
+  }
+
+  function bajar(grilla,index_actual,cantidad_lat,cantidad_lon){
+    if((index_actual-cantidad_lon)<0){
+      return -1;
+    }
+    else if(grilla[index_actual-cantidad_lon][2]=="@"){
+      return -2;
+    }
+    else{
+      return (index_actual-cantidad_lon);
+    }
+  }
+
+  function izquierda(grilla,index_actual,cantidad_lat,cantidad_lon){
+    if((index_actual-1)<0){
+      return -1;
+    }
+    else if((index_actual%cantidad_lon)==0){
+      return -1;
+    }
+    else if(grilla[index_actual-1][2]=="@"){
+      return -2;
+    }
+    else{
+      return (index_actual-1);
+    }
+  }
+
+  function derecha(grilla,index_actual,cantidad_lat,cantidad_lon){
+    if((index_actual+1)>=grilla.length){
+      return -1;
+    }
+    else if(((index_actual)%(cantidad_lon))==(cantidad_lon-1)){
+      return -1;
+    }
+    else if(grilla[index_actual+1][2]=="@"){
+      return -2;
+    }
+    else{
+      return (index_actual+1);
+    }
+  }
+
+  function buscarPuntoMasCercano(punto_lat,punto_lon,grilla){
+    var index_cercano = [0,100,100]; //[index, diferencia_lat,diferencia_lon]
+    for (var i=0; i<grilla.length;i++){
+      var diferencia_lat = Math.abs(punto_lat-grilla[i][0]);
+      var diferencia_lon = Math.abs(punto_lon-grilla[i][1]);
+      if(diferencia_lat<=index_cercano[1] && diferencia_lon<=index_cercano[2]){
+        index_cercano = [i,diferencia_lat,diferencia_lon];
+      }
+    }
+    var index = index_cercano[0];
+    //console.log("index: "+index_cercano[0]+", diferencia ["+index_cercano[1]+", "+index_cercano[2]);
+    return index;
+  }
+
+  function crearGrilla(area,obstaculos){
     var puntos_grilla = [];
 
     var cantidad_lat = calcularCantidadGrillas(area[0][0],area[1][0]);
@@ -502,6 +728,17 @@ function generarCamino() {
         punto.push("0");
         //console.log("["+punto[0]+","+punto[1]+"], ");
         puntos_grilla.push(punto);
+      }
+    }
+
+    for (var i=0; i<cantidad_lon;i++){
+      for (var j=0; j<cantidad_lat;j++){
+        if(revisarGrilla(puntos_grilla[i*cantidad_lat+j][0],puntos_grilla[i*cantidad_lat+j][1],obstaculos)){
+          puntos_grilla[i*cantidad_lat+j][2]="@";
+        }
+        else{
+          puntos_grilla[i*cantidad_lat+j][2]="-";          
+        }
       }
     }
     /*
