@@ -586,11 +586,13 @@ function generarCamino() {
     txt.push(linea_temp);
     console.log("largo txt: "+txt.length);
 
+    var salida_waypoints = ""
     for (var i=0;i<txt.length; i++) {
       console.log(txt[i]);
+      salida_waypoints = salida_waypoints + txt[i] + '\n';
     };
     moverdrone(arreglo_ruta);
-    //download( 'archivo.waypoints', txt);
+    download( 'archivo.waypoints', salida_waypoints);
   }
 
 
