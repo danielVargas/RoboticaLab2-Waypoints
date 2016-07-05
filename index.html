@@ -441,7 +441,7 @@ function generarCamino() {
   var tamano_grilla = 12; //numeros enteros
   var grilla_global = [];
   var index_global = 0;
-  //var ruta = [];
+  var ruta = [];
 
   function calcularCamino(area, obstaculos, punto_inicial){
 
@@ -557,16 +557,41 @@ function generarCamino() {
     }
 
 
-    var valor = comprobarBajar(grilla,6025,cantidad_lat,cantidad_lon)
-    console.log("valor: "+valor);
-    /*
-    console.log("Ruta lenght: "+ruta.length);
-    for (var i=0;i<ruta.length; i++) {
-      console.log("["+ruta[i][0]+", "+ruta[i][1]+"]");
-    };
-    */
+    //var valor = comprobarDiagonalSubir(grilla,1162,cantidad_lat,cantidad_lon);
+    //console.log("valor: "+valor);
+    imprimirResultado(punto_inicial,grilla);
+
+    
   }
 
+
+  function imprimirResultado(punto_inicial,grilla){
+    var txt = [];
+    var linea_temp = "QGC WPL 110";
+    txt.push(linea_temp);
+    linea_temp = "0 1 0 16  0 0 0 0 "+punto_inicial[0]+"  "+punto_inicial[1]+"  100.000000  1";
+    txt.push(linea_temp);
+    linea_temp = "1 0 0 22  20.000000 0.000000  0.000000  0.000000  0.000000  0.000000  30.000000 1";
+    txt.push(linea_temp);
+    linea_temp = "2 0 0 178 0.000000  3.000000  0.000000  0.000000  0.000000  0.000000  0.000000  1";
+    txt.push(linea_temp);
+    var numero_actual = 3;
+
+    //console.log("Ruta lenght: "+ruta.length);
+    for (var i=0;i<ruta.length; i++) {
+      //console.log("["+grilla[ruta[i]][0]+", "+grilla[ruta[i]][1]+"]");
+      linea_temp = numero_actual+"  0 0 16  0.000000  0.000000  0.000000  0.000000  "+grilla[ruta[i]][0]+"  "+grilla[ruta[i]][1]+"  15.000000 1";
+      txt.push(linea_temp);
+      numero_actual++;
+    };
+    linea_temp = numero_actual+"  0 0 20  0.000000  0.000000  0.000000  0.000000  0.000000  0.000000  0.000000  1";
+    txt.push(linea_temp);
+    console.log("largo txt: "+txt.length);
+
+    for (var i=0;i<txt.length; i++) {
+      console.log(txt[i]);
+    };
+  }
 
 
   function subirEnGrilla(index_actual,grilla,area,cantidad_lat,cantidad_lon){
@@ -574,20 +599,23 @@ function generarCamino() {
 
     //ruta.push([grilla[index_actual][0],grilla[index_actual][1]]);
     //console.log("1index_actual: "+index_actual+", index_global: "+index_global);
-    index_global = index_actual;
     //console.log("2index_actual: "+index_actual+", index_global: "+index_global);
 
     var index_nuevo = subir(grilla,index_actual,cantidad_lat,cantidad_lon)
-
+    index_global = index_actual;
+    ruta.push(index_actual);
+    if(index_nuevo==-2){
+      var nuevo_valor = evadirObstaculo(index_actual,grilla,area,cantidad_lat,cantidad_lon,"subir");
+      if(nuevo_valor>=0){
+        index_nuevo = nuevo_valor;
+      }
+    }
     if(index_nuevo!=-1 && index_nuevo!=-2){
       //console.log("index: "+index_nuevo),
       subirEnGrilla(index_nuevo,grilla,area,cantidad_lat,cantidad_lon)
     }
     else if(index_nuevo==-1){
 
-    }
-    else if(index_nuevo==-2){
-      //console.log("-2 obstaculo.subiendo: ");
     }
     else{
       console.log("Error 1: Ocurrio algo inesperado.");
@@ -598,17 +626,20 @@ function generarCamino() {
     //console.log("index actual: "+index_actual);
     var index_nuevo = bajar(grilla,index_actual,cantidad_lat,cantidad_lon);
     //console.log("bajarEnGrilla index: "+index_nuevo);
-
     index_global = index_actual;
-
+    ruta.push(index_actual);
+    if(index_nuevo==-2){
+      //console.log("-2 obstaculo.bajando");
+      var nuevo_valor = evadirObstaculo(index_actual,grilla,area,cantidad_lat,cantidad_lon,"bajar");
+      if(nuevo_valor>=0){
+        index_nuevo = nuevo_valor;
+      }
+    }
     if(index_nuevo!=-1 && index_nuevo!=-2){
       bajarEnGrilla(index_nuevo,grilla,area,cantidad_lat,cantidad_lon)
     }
     else if(index_nuevo==-1){
 
-    }
-    else if(index_nuevo==-2){
-      //console.log("-2 obstaculo.bajando");
     }
     else{
       console.log("Error 2: Ocurrio algo inesperado.");
@@ -618,31 +649,168 @@ function generarCamino() {
 
   function evadirObstaculo(index_actual,grilla,area,cantidad_lat,cantidad_lon,sentido){
     //sentido: ""bajar", "subir"
-    if (sentido=="bajar"){
-      evadirObstaculoBajando(index_actual,grilla,area,cantidad_lat,cantidad_lon);
+    var asegurar = asegurarEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
+    var movimientos = calcularEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
+    console.log("index_actual: "+index_actual+", \tasegurado: "+asegurar+", mov izquierda: "+movimientos[1]+", mov vertical: "+movimientos[0]);
+    return ejecutarEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
+
+  }
+
+
+  function ejecutarEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon){
+    var index_nuevo;
+    var movimientos = calcularEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
+    var mov_temp_0 = movimientos[0];
+    var mov_temp_1 = movimientos[1];
+
+    if(mov_temp_0>0 && mov_temp_1>0){
+      while(mov_temp_1>0){
+        index_nuevo = izquierda(grilla,index_actual,cantidad_lat,cantidad_lon);
+        index_actual=index_nuevo;
+        ruta.push(index_actual);
+        mov_temp_1--;
+      }
+      if (sentido=="subir"){
+        while(mov_temp_0>0){
+          index_nuevo = subir(grilla,index_actual,cantidad_lat,cantidad_lon);
+          index_actual=index_nuevo;
+          ruta.push(index_actual);
+          mov_temp_0--;
+        }   
+      }
+      else if (sentido=="bajar"){
+        while(mov_temp_0>0){
+          index_nuevo = bajar(grilla,index_actual,cantidad_lat,cantidad_lon);
+          index_actual=index_nuevo;
+          ruta.push(index_actual);
+          mov_temp_0--;
+        }        
+      }
+      mov_temp_1 = movimientos[1];
+      while(mov_temp_1>0){
+        index_nuevo = derecha(grilla,index_actual,cantidad_lat,cantidad_lon);
+        index_actual=index_nuevo;
+        ruta.push(index_actual);
+        mov_temp_1--;
+      }
+      return index_actual;
+
     }
-    if (sentido=="subir"){
-      evadirObstaculoSubiendo(index_actual,grilla,area,cantidad_lat,cantidad_lon);
+    else{
+      return -2;
     }
   }
 
-  function evadirObstaculoBajando(index_actual,grilla,area,cantidad_lat,cantidad_lon){
-    
+
+
+
+
+
+  function asegurarEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon){
+    var index_nuevo;
+    var movimientos = calcularEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
+    var mov_temp_0 = movimientos[0];
+    var mov_temp_1 = movimientos[1];
+
+    if(mov_temp_0>0 && mov_temp_1>0){
+      while(mov_temp_1>0){
+        index_nuevo = izquierda(grilla,index_actual,cantidad_lat,cantidad_lon);
+        if(index_nuevo==-1 || index_nuevo==-2){
+          return -1;
+        }
+        index_actual=index_nuevo;
+        mov_temp_1--;
+      }
+      if (sentido=="subir"){
+        while(mov_temp_0>0){
+          index_nuevo = subir(grilla,index_actual,cantidad_lat,cantidad_lon);
+          if(index_nuevo==-1 || index_nuevo==-2){
+            return -1;
+          }
+          index_actual=index_nuevo;
+          mov_temp_0--;
+        }   
+      }
+      else if (sentido=="bajar"){
+        while(mov_temp_0>0){
+          index_nuevo = bajar(grilla,index_actual,cantidad_lat,cantidad_lon);
+          if(index_nuevo==-1 || index_nuevo==-2){
+            return -1;
+          }
+          index_actual=index_nuevo;
+          mov_temp_0--;
+        }        
+      }
+      mov_temp_1 = movimientos[1];
+      while(mov_temp_1>0){
+        index_nuevo = derecha(grilla,index_actual,cantidad_lat,cantidad_lon);
+        if(index_nuevo==-1 || index_nuevo==-2){
+          return -1;
+        }
+        index_actual=index_nuevo;
+        mov_temp_1--;
+      }
+      return 1;
+
+    }
+    else{
+      return -2;
+    }
   }
-  function evadirObstaculoSubiendo(index_actual,grilla,area,cantidad_lat,cantidad_lon){
-    
+
+
+
+
+
+
+
+
+  function calcularEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon){
+    //sentido: "subir", "bajar"
+    var movimientos = [-1,-1];
+    if(sentido=="subir"){
+      movimientos[0] = comprobarSubir(grilla,index_actual,cantidad_lat,cantidad_lon);
+      movimientos[1] = comprobarDiagonalSubir(grilla,index_actual,cantidad_lat,cantidad_lon);
+    }
+    else if(sentido=="bajar"){
+      movimientos[0] = comprobarBajar(grilla,index_actual,cantidad_lat,cantidad_lon);
+      movimientos[1] = comprobarDiagonalBajar(grilla,index_actual,cantidad_lat,cantidad_lon);      
+    }
+    return movimientos;
   }
 
 
+  function comprobarDiagonalSubir(grilla,index_actual,cantidad_lat,cantidad_lon){
+    if((index_actual+cantidad_lon)>=grilla.length){
+      return -1;
+    }
+    else{
+      var index = 1;
+      while((index_actual+cantidad_lon-index)%cantidad_lon!=(cantidad_lon-1)){
+        if (grilla[index_actual+cantidad_lon-index][2]!="@"){
+          return index;
+        }
+        index++;
+      }
+      return -2;
+    }
+  }
 
-
-
-
-
-
-
-
-
+  function comprobarDiagonalBajar(grilla,index_actual,cantidad_lat,cantidad_lon){
+  if((index_actual-cantidad_lon)<0){
+      return -1;
+    }
+    else{
+      var index = 1;
+      while((index_actual-cantidad_lon-index)%cantidad_lon!=(cantidad_lon-1)){
+        if (grilla[index_actual-cantidad_lon-index][2]!="@"){
+          return index;
+        }
+        index++;
+      }
+      return -2;
+    }
+  }
 
   function comprobarSubir(grilla,index_actual,cantidad_lat,cantidad_lon){
     if((index_actual+cantidad_lon)>=grilla.length){
