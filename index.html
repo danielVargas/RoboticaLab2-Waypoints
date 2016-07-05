@@ -61,53 +61,66 @@
             <div class="form-group">
               <div class="row">
                 <div class="col col-md-6">
-                  <label for="ptoa">Punto A</label>
-                  <div  id="ptoa"  class="row">
-                   <div class="col col-md-6">
-                    <label for=latitud>Latitud</label>
-                    <input type="number" name="latitud" id="latitudA" class="form-control" value="-33.362596">
-                  </div>
-                  <div class="col col-md-6">
-                   <label for=longitud>Longitud</label>
-                   <input type="number" name="longitud" id="longitudA" class="form-control"  value="-70.723603">
-                 </div>
-               </div>
-               <br>
-               <label for="ptob">Punto B</label>
-               <div  id="ptob"  class="row">
-                 <div class="col col-md-6">
-                  <label for=latitud>Latitud</label>
-                  <input type="number" name="latitud" id="latitudB" class="form-control"  value="-33.382596">
-                </div>
-                <div class="col col-md-6">
-                 <label for=longitud>Longitud</label>
-                 <input type="number" name="longitud" id="longitudB" class="form-control"  value="-70.723603">
-               </div>
-             </div>
-             <br>
-             <label for="ptoc">Punto C</label>
-             <div  id="ptoc"  class="row">
-               <div class="col col-md-6">
-                <label for=latitud>Latitud</label>
-                <input type="number" name="latitud" id="latitudC" class="form-control"  value="-33.382596">
-              </div>
-              <div class="col col-md-6">
-                <label for=longitud>Longitud</label>
-                <input type="number" name="longitud" id="longitudC" class="form-control"  value="-70.783603">
-              </div>
-            </div>
-            <br>
-            <label for="ptod">Punto D</label>
+
+
+
+             
+             <label for="ptoc">Punto A</label>
+            
             <div  id="ptod"  class="row">
              <div class="col col-md-6">
               <label for=latitud>Latitud</label>
-              <input type="number" name="latitud" id="latitudD" class="form-control"  value="-33.362596">
+              <input type="number" name="latitud" id="latitudD" class="form-control"  value="-33.590735">
             </div>
             <div class="col col-md-6">
              <label for=longitud>Longitud</label>
-             <input type="number" name="longitud" id="longitudD" class="form-control"  value="-70.783603">
+             <input type="number" name="longitud" id="longitudD" class="form-control"  value="-70.727667">
            </div>
          </div>
+
+
+            <br>
+            <label for="ptod">Punto B</label>
+
+             <div  id="ptoc"  class="row">
+               <div class="col col-md-6">
+                <label for=latitud>Latitud</label>
+                <input type="number" name="latitud" id="latitudC" class="form-control"  value="-33.593735">
+              </div>
+              <div class="col col-md-6">
+                <label for=longitud>Longitud</label>
+                <input type="number" name="longitud" id="longitudC" class="form-control"  value="-70.727667">
+              </div>
+            </div>
+         <br>
+                  <label for="ptoa">Punto C</label>
+                  <div  id="ptoa"  class="row">
+                   <div class="col col-md-6">
+                    <label for=latitud>Latitud</label>
+                    <input type="number" name="latitud" id="latitudA" class="form-control" value="-33.590735">
+                  </div>
+                  <div class="col col-md-6">
+                   <label for=longitud>Longitud</label>
+                   <input type="number" name="longitud" id="longitudA" class="form-control"  value="-70.724667">
+                 </div>
+               </div>
+
+               <br>
+               <label for="ptob">Punto D</label>
+               <div  id="ptob"  class="row">
+                 <div class="col col-md-6">
+                  <label for=latitud>Latitud</label>
+                  <input type="number" name="latitud" id="latitudB" class="form-control"  value="-33.593735">
+                </div>
+                <div class="col col-md-6">
+                 <label for=longitud>Longitud</label>
+                 <input type="number" name="longitud" id="longitudB" class="form-control"  value="-70.724667">
+               </div>
+             </div>
+
+
+
+
        </div>
        <div class="col col-md-6">
          <img src="formato_de_ingreso.png" alt="">
@@ -404,11 +417,12 @@ function generarCamino() {
      // var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]],[[-33.587309, -70.722954],[2,3]]]; //
 
       //obstaculo 2: -33.588607, -70.726295
-
+      
+      /*
       for (var i=0; i<arreglo_obstaculos.length; i++) {
         console.log("obstaculo "+i+": ["+arreglo_obstaculos[i][0][0]+",\t"+arreglo_obstaculos[i][0][1]+"],\tancho: "+arreglo_obstaculos[i][1][0]+",\tlargo: "+arreglo_obstaculos[i][1][1]);
       };
-      
+      */
       var punto_inicial = [posInicial.getPosition().lat(),posInicial.getPosition().lng()];
       calcularCamino(vertices_area,arreglo_obstaculos,punto_inicial);
     }
@@ -462,13 +476,13 @@ function generarCamino() {
     //console.log("punto cercano: ["+grilla[index_cercano[0]][0]+","+grilla[index_cercano[0]][1]+"] , diferencia: ["+index_cercano[1]+", "+index_cercano[2]+"]");
 
     //var izq = derecha(grilla,185,cantidad_lat,cantidad_lon);
-    console.log("Celdas lon: "+cantidad_lon+", celdas lat: "+cantidad_lat+", tamaño grilla (mts): "+tamano_grilla);
+    //console.log("Celdas lon: "+cantidad_lon+", celdas lat: "+cantidad_lat+", tamaño grilla (mts): "+tamano_grilla);
     //console.log("Resultado izquierda: "+izq);
 
     var index_inicial = buscarPuntoMasCercano(punto_inicial[0],punto_inicial[1],grilla);
     var direccionLon = buscarDireccionLon(index_inicial,grilla,area);
     var direccionLat = buscarDireccionLat(index_inicial,grilla,area);
-    console.log("se encuentra: "+direccionLon+", "+direccionLat);
+    //console.log("se encuentra: "+direccionLon+", "+direccionLat);
 /*
     for (var i=0; i<grilla.length; i++) {
       
@@ -519,12 +533,12 @@ function generarCamino() {
 
       }
       else if (index_temp==-2){
-        console.log("-2 girando");
+        //console.log("-2 girando");
       }
       
     }
 
-
+/*
     //IMPRIMIR MAPEO
     for (var i=0; i<cantidad_lon;i++){
       var palabra = "";
@@ -536,7 +550,7 @@ function generarCamino() {
       else
         console.log(palabra+":");
     }
-
+*/
 
     //var valor = comprobarDiagonalSubir(grilla,1162,cantidad_lat,cantidad_lon);
     //console.log("valor: "+valor);
@@ -637,7 +651,7 @@ function generarCamino() {
     //sentido: ""bajar", "subir"
     var asegurar = asegurarEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
     var movimientos = calcularEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
-    console.log("index_actual: "+index_actual+", \tasegurado: "+asegurar+", mov izquierda: "+movimientos[1]+", mov vertical: "+movimientos[0]);
+    //console.log("index_actual: "+index_actual+", \tasegurado: "+asegurar+", mov izquierda: "+movimientos[1]+", mov vertical: "+movimientos[0]);
     return ejecutarEvasion(sentido,grilla,index_actual,cantidad_lat,cantidad_lon);
 
   }
@@ -860,7 +874,7 @@ function generarCamino() {
       return -1;
     }
     else if(grilla[index_actual+cantidad_lon][2]=="@"){
-      console.log("## obstaculo.subiendo: "+index_actual);
+      //console.log("## obstaculo.subiendo: "+index_actual);
       return -2;
     }
     else{
@@ -873,7 +887,7 @@ function generarCamino() {
       return -1;
     }
     else if(grilla[index_actual-cantidad_lon][2]=="@"){
-      console.log("## obstaculo.bajando: "+index_actual);
+      //console.log("## obstaculo.bajando: "+index_actual);
       return -2;
     }
     else{
