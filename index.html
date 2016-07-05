@@ -183,6 +183,7 @@ var polygon;
 var area;
 var posInicial;
 var markers=[];
+var poly;
 function initMap() {
 
   var myLatLng = {lat: -33.5926511, lng: -70.7327125};
@@ -196,7 +197,12 @@ function initMap() {
   getLocation();
 
   infoWindow = new google.maps.InfoWindow();
-
+     poly= new google.maps.Polyline({
+      strokeColor: '#FFFF00',
+      strokeOpacity: 1.0,
+      strokeWeight: 3
+      });
+      poly.setMap(map);
 }
 function getLocation() {
   if (navigator.geolocation) {
@@ -281,7 +287,7 @@ function agregarArea(){
         $.each(vertices, function (i, vertice) {
           $('#select1').append($('<option>', { 
               value: i,
-              text : vertice.lng()+","+vertice.lat()
+              text : vertice.lat()+","+vertice.lng()
             }));
         });
       }
@@ -376,10 +382,6 @@ var poly;
 
 
 function generarCamino() {
-    //console.log(polygon);
-    //console.log(area);
-    ///////////// Variables arregladas!!!!!!!!!
-    //var pos_inicial = [posInicial.getPosition().lat(),posInicial.getPosition().lng()];
     var arreglo_obstaculos = [];
     for (var i = 0; i < markers.length; i++) {
       var temp = [];
@@ -390,51 +392,30 @@ function generarCamino() {
       arreglo_obstaculos.push(temp);
     };
     
-    var arreglo_obstaculos = [];
-     
-    var vertice_area_i_abajo =  [-33.5940987,-70.7307668];
-    var vertice_area_i_arriba = [-33.5840987,-70.7307668];
-    var vertice_area_d_abajo =  [-33.5940987,-70.7207668];
-    var vertice_area_d_arriba = [-33.5840987,-70.7207668];
+    if(polygon != null &&  posInicial!= null){
 
-    var vertices_area = [vertice_area_i_abajo,vertice_area_i_arriba,vertice_area_d_abajo,vertice_area_d_arriba];
-    //[LAT,LONG],[LARGO, ANCHO]
-    var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]],[[-33.587309, -70.722954],[2,3]]]; //
+      var areapoly = polygon.getPath().b;
+      var a =  [areapoly[0].lat(),areapoly[0].lng()];
+      var b = [areapoly[1].lat(),areapoly[1].lng()];
+      var c =  [areapoly[2].lat(),areapoly[2].lng()]; 
+      var d = [areapoly[3].lat(),areapoly[3].lng()];
+      var vertices_area = [c,d,b,a];
+      //[LAT,LONG],[LARGO, ANCHO]
+     // var arreglo_obstaculos = [[[-33.5925987,-70.7259668],[10,50]],[[-33.587309, -70.722954],[2,3]]]; //
 
+      //obstaculo 2: -33.588607, -70.726295
 
-    //obstaculo 2: -33.588607, -70.726295
-
-    for (var i=0; i<arreglo_obstaculos.length; i++) {
-      console.log("obstaculo "+i+": ["+arreglo_obstaculos[i][0][0]+",\t"+arreglo_obstaculos[i][0][1]+"],\tancho: "+arreglo_obstaculos[i][1][0]+",\tlargo: "+arreglo_obstaculos[i][1][1]);
-    };
-    
-    var punto_inicial = vertice_area_i_abajo;
-    calcularCamino(vertices_area,arreglo_obstaculos,punto_inicial);
-
-
-/*
-  if(polygon != null &&  posInicial!= null){
-      poly = new google.maps.Polyline({
-      strokeColor: '#FFFF00',
-      strokeOpacity: 1.0,
-      strokeWeight: 3
-      });
-      poly.setMap(map);
-      var path = poly.getPath();
-      path.push(posInicial.getPosition());
-      var lat = posInicial.getPosition().lat();
-      var lng = posInicial.getPosition().lng();
-      for (var i = 0; i < 100; i++) {
-        var locat = new google.maps.LatLng(lat+(i/1000),lng);
-        path.push(locat);
+      for (var i=0; i<arreglo_obstaculos.length; i++) {
+        console.log("obstaculo "+i+": ["+arreglo_obstaculos[i][0][0]+",\t"+arreglo_obstaculos[i][0][1]+"],\tancho: "+arreglo_obstaculos[i][1][0]+",\tlargo: "+arreglo_obstaculos[i][1][1]);
       };
-
-       
+      
+      var punto_inicial = [posInicial.getPosition().lat(),posInicial.getPosition().lng()];
+      calcularCamino(vertices_area,arreglo_obstaculos,punto_inicial);
     }
     else{
       alertify.error("Debe ingresar una área y una posición inicial");
     }
-    */
+    
   }
 
   var un_metro = 0.0000089;
@@ -576,12 +557,15 @@ function generarCamino() {
     linea_temp = "2 0 0 178 0.000000  3.000000  0.000000  0.000000  0.000000  0.000000  0.000000  1";
     txt.push(linea_temp);
     var numero_actual = 3;
-
+    var arreglo_ruta = [];
+    var ruta_temp;
     //console.log("Ruta lenght: "+ruta.length);
     for (var i=0;i<ruta.length; i++) {
       //console.log("["+grilla[ruta[i]][0]+", "+grilla[ruta[i]][1]+"]");
       linea_temp = numero_actual+"  0 0 16  0.000000  0.000000  0.000000  0.000000  "+grilla[ruta[i]][0]+"  "+grilla[ruta[i]][1]+"  15.000000 1";
       txt.push(linea_temp);
+      ruta_temp = [grilla[ruta[i]][0],grilla[ruta[i]][1]];
+      arreglo_ruta.push(ruta_temp);
       numero_actual++;
     };
     linea_temp = numero_actual+"  0 0 20  0.000000  0.000000  0.000000  0.000000  0.000000  0.000000  0.000000  1";
@@ -591,6 +575,8 @@ function generarCamino() {
     for (var i=0;i<txt.length; i++) {
       console.log(txt[i]);
     };
+    moverdrone(arreglo_ruta);
+    //download( 'archivo.waypoints', txt);
   }
 
 
@@ -1040,6 +1026,76 @@ function generarCamino() {
   }
 
 
+ function moverdrone (camino) {
+    poly.setPath(new Array());
+    var path = poly.getPath();
+
+    timeout([0, camino.length-1], 1, function(i){
+          var locat = new google.maps.LatLng(camino[i][0],camino[i][1]);
+          posInicial.setPosition(locat); // Do something after the sleep!
+          path.push(locat);
+    });
+
+
+
+ }
+
+function timeout(range, time, callback){
+  var i = range[0];                
+  callback(i);
+  Loop();
+  function Loop(){
+    setTimeout(function(){
+      i= i + 1;
+      if (i<=range[1]){
+        callback(i);
+        Loop();
+      }
+    }, time*0.0000000001)
+  } 
+}
+function descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var save = document.createElement('a');
+        save.href = event.target.result;
+        save.target = '_blank';
+        save.download = nombreArchivo || 'archivo.dat';
+        var clicEvent = new MouseEvent('click', {
+            'view': window,
+                'bubbles': true,
+                'cancelable': true
+        });
+        save.dispatchEvent(clicEvent);
+        (window.URL || window.webkitURL).revokeObjectURL(save.href);
+    };
+    reader.readAsDataURL(contenidoEnBlob);
+};
+$( "#boton-txt" ).click(function() {
+  var datos = "Hola"
+    descargarArchivo(generarTexto(datos), 'archivo.waypoints');
+});
+//Genera un objeto Blob con los datos en un archivo TXT
+function generarTexto(datos) {
+    //El contructor de Blob requiere un Array en el primer parámetro
+    //así que no es necesario usar toString. el segundo parámetro
+    //es el tipo MIME del archivo
+    return new Blob(datos, {
+        type: 'text/plain'
+    });
+};
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
 
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNU3lXIG8aBek6Zf67cufU8IjM8OlvlcQ&callback=initMap"
